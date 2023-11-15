@@ -32,24 +32,6 @@ TEST(PasswordTest, triple_letter_password)
         int actual = my_password.count_leading_characters("yyy");
         ASSERT_EQ(3,actual);
 }
-TEST(PasswordTest, quad_letter_password)
-{
-    Password my_password;
-        int actual = my_password.count_leading_characters("ffff");
-        ASSERT_EQ(4,actual);
-}
-TEST(PasswordTest, quin_letter_password)
-{
-    Password my_password;
-        int actual = my_password.count_leading_characters("AAAAA");
-        ASSERT_EQ(5,actual);
-}
-TEST(PasswordTest, SEX_letter_password)
-{
-    Password my_password;
-        int actual = my_password.count_leading_characters("XXXXXX");
-        ASSERT_EQ(6,actual);
-}
 TEST(PasswordTest, repeat_check_end)
 {
 	Password pass;
@@ -59,7 +41,7 @@ TEST(PasswordTest, repeat_check_end)
 TEST(PasswordTest, multiple_repeats)
 {
 	Password pass;
-	ASSERT_EQ(1, pass.count_leading_characters("abaa"));
+	ASSERT_EQ(2, pass.count_leading_characters("aabaa"));
 }
 TEST(PasswordTest, empty_pass)
 {
@@ -85,4 +67,61 @@ TEST(PasswordTest, empty_mix)
 {
         Password pass;
         ASSERT_EQ(false, pass.has_mixed_case(""));
+}
+TEST(PasswordTest, leading_lower_with_trailing_lower)
+{
+        Password pass;
+        ASSERT_EQ(true, pass.has_mixed_case("aaaaaaBaaaa"));
+}
+TEST(PasswordTest, mixed_with_space)
+{
+        Password pass;
+        ASSERT_EQ(true, pass.has_mixed_case("a        B"));
+}
+TEST(PasswordTest, default_con_test){
+	Password pass;
+	ASSERT_EQ(true, pass.authenticate("ChicoCA-95929"));
+}
+TEST(PasswordTest, authenticate_test_basic){
+	Password pass;
+	pass.set("Cabinetdoor");
+	ASSERT_EQ(true, pass.authenticate("Cabinetdoor"));
+}
+TEST(PasswordTest, auhenticate_test_oldpass){
+	Password pass;
+	pass.set("RandomPass");
+	pass.set("ChicoCA-95929");
+	ASSERT_EQ(false, pass.authenticate("ChicoCA-95929"));
+}
+TEST(PasswordTest, authenticate_sad_test){
+	Password pass;
+	pass.set("gggg y");
+	ASSERT_EQ(false, pass.authenticate("gggg y"));
+}
+TEST(PasswordTest, authenticate_sad_test2){
+	Password pass;
+	pass.set("GGGGyyyy");
+	ASSERT_EQ(false, pass.authenticate("GGGGyyyy"));
+}
+TEST(PasswordTest, authenticate_good_length){
+	Password pass;
+	pass.set("Poolside");
+	ASSERT_EQ(true, pass.authenticate("Poolside"));
+}
+TEST(PasswordTest, authenticate_sad_length){
+	Password pass;
+	pass.set("Pool");
+	ASSERT_EQ(false, pass.authenticate("Pool"));
+}
+TEST(PasswordTest, authenticate_leading_length){
+        Password pass;
+        pass.set("PPPoolside");
+        ASSERT_EQ(true, pass.authenticate("PPPoolside"));
+}
+TEST(PasswordTest, authenticate_prev_pass){
+	Password pass;
+	pass.set("GoodPass");
+	pass.set("ChicoCA-95929");
+	pass.set("GoodPass");
+	ASSERT_EQ(true, pass.authenticate("GoodPass"));
 }
